@@ -17,6 +17,16 @@ class ASTTransformationTests extends AnyFunSuite {
     def createVerifier(fullCmd: String): Verifier = ???
   }
 
+  test("Transformations that only change metadata work") {
+    import viper.silver.ast._
+    val info = SimpleInfo(Seq("it's true"))
+    val node = And(TrueLit()(), FalseLit()())()
+    val transformedNode = node.transform{
+      case TrueLit() => TrueLit()(info = info)
+    }
+    assert(transformedNode.left.info.getUniqueInfo[SimpleInfo].contains(info))
+  }
+
   test("Testing support to arbitrary collection types of children node - Example 1") {
     import viper.silver.ast._
     import viper.silver.ast.utility._
